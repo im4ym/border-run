@@ -86,6 +86,39 @@ interface QuizSessionDao {
     fun getStreakHighScore(): Flow<Int?>
 
     /**
+     * Updates the final result columns of an existing session row.
+     *
+     * Called by [com.borderrun.app.domain.usecase.CompleteQuizSessionUseCase] when
+     * the user finishes all questions. The session row is created with placeholder
+     * values at quiz start so that [QuizAnswerEntity] rows can reference it
+     * via foreign key; this query fills in the real totals.
+     *
+     * @param id Session primary key.
+     * @param totalQuestions Total number of questions presented.
+     * @param correctAnswers Number answered correctly.
+     * @param score Total points earned.
+     * @param durationMs Total quiz duration in milliseconds.
+     * @param completedAt Unix timestamp (ms) of quiz completion.
+     */
+    @Query("""
+        UPDATE quiz_sessions
+        SET totalQuestions = :totalQuestions,
+            correctAnswers = :correctAnswers,
+            score          = :score,
+            durationMs     = :durationMs,
+            completedAt    = :completedAt
+        WHERE id = :id
+    """)
+    suspend fun updateSessionResult(
+        id: Int,
+        totalQuestions: Int,
+        correctAnswers: Int,
+        score: Int,
+        durationMs: Long,
+        completedAt: Long,
+    )
+
+    /**
      * Deletes all rows from the `quiz_sessions` table.
      *
      * Called from "Clear All My Data" in Settings.

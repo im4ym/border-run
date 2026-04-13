@@ -2,9 +2,11 @@ package com.borderrun.app.di
 
 import com.borderrun.app.data.repository.CountryRepositoryImpl
 import com.borderrun.app.data.repository.DailyChallengeRepositoryImpl
+import com.borderrun.app.data.repository.QuizRepositoryImpl
 import com.borderrun.app.data.repository.StatsRepositoryImpl
 import com.borderrun.app.domain.repository.CountryRepository
 import com.borderrun.app.domain.repository.DailyChallengeRepository
+import com.borderrun.app.domain.repository.QuizRepository
 import com.borderrun.app.domain.repository.StatsRepository
 import dagger.Binds
 import dagger.Module
@@ -59,4 +61,16 @@ abstract class RepositoryModule {
     abstract fun bindDailyChallengeRepository(
         impl: DailyChallengeRepositoryImpl,
     ): DailyChallengeRepository
+
+    /**
+     * Binds [QuizRepositoryImpl] as the implementation of [QuizRepository].
+     *
+     * @param impl The concrete implementation provided via constructor injection.
+     * @return The [QuizRepository] interface.
+     */
+    @Binds
+    @Singleton
+    abstract fun bindQuizRepository(
+        impl: QuizRepositoryImpl,
+    ): QuizRepository
 }

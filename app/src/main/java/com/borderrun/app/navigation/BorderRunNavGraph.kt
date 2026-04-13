@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.borderrun.app.ui.home.HomeScreen
+import com.borderrun.app.ui.quiz.QuizScreen
 
 /**
  * Root navigation graph for Border Run.
@@ -82,10 +83,15 @@ fun BorderRunNavGraph(
                 navArgument(Screen.Quiz.ARG_REGION) { type = NavType.StringType },
                 navArgument(Screen.Quiz.ARG_DIFFICULTY) { type = NavType.StringType },
             ),
-        ) { backStackEntry ->
-            val region = backStackEntry.arguments?.getString(Screen.Quiz.ARG_REGION) ?: ""
-            val difficulty = backStackEntry.arguments?.getString(Screen.Quiz.ARG_DIFFICULTY) ?: ""
-            PlaceholderScreen(label = "Quiz — $region / $difficulty")
+        ) {
+            QuizScreen(
+                onNavigateToResult = { sessionId ->
+                    navController.navigate(Screen.QuizResult.createRoute(sessionId)) {
+                        popUpTo(Screen.Quiz.route) { inclusive = true }
+                    }
+                },
+                onNavigateBack = { navController.popBackStack() },
+            )
         }
 
         // ── Quiz Result ───────────────────────────────────────────────────────
