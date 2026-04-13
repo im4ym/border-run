@@ -1,30 +1,44 @@
 package com.borderrun.app.data.remote.api
 
 import com.borderrun.app.data.remote.dto.CountryDto
+import com.borderrun.app.data.remote.dto.CountryExtraDto
 import retrofit2.http.GET
-
-/** Fields requested from the RestCountries API to minimise response payload. */
-private const val COUNTRY_FIELDS =
-    "name,cca3,capital,flags,population,area,region,subregion,languages,currencies,borders,landlocked,car,timezones"
+import retrofit2.http.Query
 
 /**
  * Retrofit service interface for the RestCountries v3.1 API.
  *
- * Base URL: `https://restcountries.com/v3.1/`
+ * Base URL: `https://restcountries.com/`
  *
- * No authentication is required. The API has no strict rate limit, but data
- * is cached aggressively in Room to avoid unnecessary network calls.
+ * The `/all` endpoint enforces a maximum of 10 fields per request, so country
+ * data is fetched in two calls and merged by cca3 in [CountryRepositoryImpl]:
+ *
+ * - [getAllCountriesBasic] — 10 core fields (name, cca3, capital, flags,
+ *   population, region, subregion, languages, currencies, borders)
+ * - [getAllCountriesExtra] — 6 supplemental fields (name, cca3, area,
+ *   landlocked, car, timezones)
  */
 interface CountryApiService {
 
     /**
-     * Fetches all countries with the fields required by Border Run.
+     * Fetches core fields for all countries (10 fields, at the API limit).
      *
-     * The `fields` query parameter limits the response to only the columns
-     * defined in [COUNTRY_FIELDS], significantly reducing payload size.
-     *
-     * @return List of [CountryDto] for all ~250 countries in the world.
+     * @param fields Comma-separated field names — must be exactly 10 or fewer.
+     * @return List of [CountryDto] for all ~250 countries.
      */
-    @GET("all?fields=$COUNTRY_FIELDS")
-    suspend fun getAllCountries(): List<CountryDto>
+    @GET("v3.1/all")
+    suspend fun getAllCountriesBasic(
+        @Query("fields") fields: String,
+    ): List<CountryDto>
+
+    /**
+     * Fetches supplemental fields for all countries (6 fields).
+     *
+     * @param fields Comma-separated field names — must be exactly 10 or fewer.
+     * @return List of [CountryExtraDto] for all ~250 countries.
+     */
+    @GET("v3.1/all")
+    suspend fun getAllCountriesExtra(
+        @Query("fields") fields: String,
+    ): List<CountryExtraDto>
 }

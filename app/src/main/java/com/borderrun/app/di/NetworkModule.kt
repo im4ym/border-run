@@ -11,8 +11,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-/** Base URL for the RestCountries v3.1 API. */
-private const val BASE_URL = "https://restcountries.com/v3.1/"
+/** Base URL for the RestCountries API. Version path is included in each endpoint. */
+private const val BASE_URL = "https://restcountries.com/"
 
 /**
  * Hilt module that provides the network stack: [OkHttpClient], [Retrofit],

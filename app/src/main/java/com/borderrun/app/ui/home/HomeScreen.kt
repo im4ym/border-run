@@ -165,6 +165,7 @@ fun HomeScreen(
                 )
             },
         ) { innerPadding ->
+            val syncError = uiState.syncError
             if (uiState.isLoading) {
                 Box(
                     modifier = Modifier
@@ -174,6 +175,13 @@ fun HomeScreen(
                 ) {
                     CircularProgressIndicator(color = PrimaryGreen)
                 }
+            } else if (syncError != null) {
+                SyncErrorBanner(
+                    message = syncError,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                )
             } else {
                 LazyColumn(
                     modifier = Modifier
@@ -230,6 +238,40 @@ fun HomeScreen(
                     item { Spacer(modifier = Modifier.height(8.dp)) }
                 }
             }
+        }
+    }
+}
+
+// ── Sync error banner ─────────────────────────────────────────────────────────
+
+/**
+ * Full-area error state shown when the initial sync failed and the cache is
+ * empty, so there is nothing to display.
+ *
+ * @param message Human-readable error description from [HomeUiState.syncError].
+ * @param modifier Modifier applied to the outer [Box].
+ */
+@Composable
+private fun SyncErrorBanner(message: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(horizontal = 32.dp),
+        ) {
+            Text(
+                text = "⚠️",
+                fontSize = 48.sp,
+            )
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyLarge,
+                color = ErrorRed,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            )
         }
     }
 }

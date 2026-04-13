@@ -37,4 +37,11 @@ data class HomeUiState(
     val accuracy: Float = 0f,
     val weaknessData: WeaknessData? = null,
     val regionCounts: Map<String, Int> = emptyMap(),
+    /**
+     * Non-null when the sync failed **and** the cache is empty, so the UI
+     * can show a full-screen error banner. `null` when data is loading,
+     * loaded successfully, or the API failed but stale cache exists (silent
+     * failure — the user still sees data).
+     */
+    val syncError: String? = null,
 )

@@ -57,4 +57,15 @@ interface CountryRepository {
      * @return Total cached country count.
      */
     suspend fun getCachedCountryCount(): Int
+
+    /**
+     * Returns the timestamp (ms since epoch) of the most recently cached
+     * country row, or `null` if the cache is empty.
+     *
+     * Used by [com.borderrun.app.domain.usecase.SyncCountriesUseCase] to
+     * decide whether a refresh is needed based on cache staleness.
+     *
+     * @return Most recent `cachedAt` value, or `null`.
+     */
+    suspend fun getLatestCacheTimestamp(): Long?
 }
