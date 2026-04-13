@@ -1,58 +1,61 @@
 package com.borderrun.app.ui.theme
 
-import android.app.Activity
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+/**
+ * Material 3 colour scheme derived from the Border Run design system.
+ *
+ * Dynamic colour (Monet) is intentionally disabled so the app always renders
+ * with the spec's mint-to-sky gradient palette regardless of device wallpaper.
+ */
+private val BorderRunColorScheme = lightColorScheme(
+    primary = PrimaryGreen,
+    onPrimary = TextHeading,
+    secondary = SecondaryTeal,
+    onSecondary = TextHeading,
+    background = GradientMint,         // first gradient stop used as base background
+    surface = CardSurface,
+    onBackground = TextHeading,
+    onSurface = TextBody,
+    error = ErrorRed,
+    onError = TextHeading,
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+/**
+ * Shape tokens matching the Border Run spec corner-radius values.
+ *
+ * | Token       | dp  | Usage                        |
+ * |-------------|-----|------------------------------|
+ * | extraSmall  | 12  | icon containers, progress    |
+ * | small       | 16  | buttons, region / stat cards |
+ * | medium      | 22  | main content cards           |
+ */
+private val BorderRunShapes = Shapes(
+    extraSmall = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+    small = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+    medium = androidx.compose.foundation.shape.RoundedCornerShape(22.dp),
 )
 
+/**
+ * Root Material 3 theme for Border Run.
+ *
+ * Always uses the light colour scheme with Nunito typography and spec-aligned
+ * shape tokens. Dark mode and dynamic colour are not supported in v1.
+ *
+ * @param content The composable content to apply the theme to.
+ */
 @Composable
 fun BorderRunTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-
     MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
+        colorScheme = BorderRunColorScheme,
+        typography = BorderRunTypography,
+        shapes = BorderRunShapes,
+        content = content,
     )
 }
