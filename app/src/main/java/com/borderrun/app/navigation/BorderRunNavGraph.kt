@@ -12,19 +12,25 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.borderrun.app.ui.home.HomeScreen
 
 /**
  * Root navigation graph for Border Run.
  *
  * Defines all [NavHost] destinations using the routes declared in [Screen].
- * Each composable destination is a placeholder for now; the real screen
- * composables will replace them in subsequent implementation milestones.
+ * The Home destination is fully implemented via [HomeScreen]; remaining
+ * destinations use placeholder composables pending their own implementation
+ * milestones.
  *
- * The graph starts at [Screen.Home]. Navigation into the quiz flow follows
- * the path: Home → Quiz → QuizResult → (back to Home or retry).
+ * Navigation flow:
+ * ```
+ * Home ──► Quiz/{region}/{difficulty} ──► QuizResult/{sessionId}
+ *      ├──► Stats
+ *      ├──► Settings ──► PermissionRationale
+ *      └──► Explorer
+ * ```
  *
- * A deep link from notification taps uses the route:
- * `borderrun://quiz/daily/medium`
+ * Deep link: notification tap → `borderrun://quiz/daily/medium`
  *
  * @param navController The [NavHostController] used to drive navigation.
  *   Defaults to a freshly remembered controller.
@@ -40,7 +46,33 @@ fun BorderRunNavGraph(
 
         // ── Home ──────────────────────────────────────────────────────────────
         composable(route = Screen.Home.route) {
-            PlaceholderScreen(label = "Home")
+            HomeScreen(
+                onRegionClick = { region ->
+                    navController.navigate(Screen.Quiz.createRoute(region, "medium"))
+                },
+                onDailyChallengeClick = {
+                    navController.navigate(Screen.Quiz.createRoute("daily", "medium"))
+                },
+                onMysteryClick = {
+                    // Mystery screen not yet implemented — stays on Home
+                },
+                onWeaknessClick = { region ->
+                    navController.navigate(Screen.Quiz.createRoute(region, "medium"))
+                },
+                onQuizClick = {
+                    navController.navigate(Screen.Quiz.createRoute("mixed", "medium"))
+                },
+                onStatsClick = {
+                    navController.navigate(Screen.Stats.route) {
+                        launchSingleTop = true
+                    }
+                },
+                onSettingsClick = {
+                    navController.navigate(Screen.Settings.route) {
+                        launchSingleTop = true
+                    }
+                },
+            )
         }
 
         // ── Quiz ──────────────────────────────────────────────────────────────

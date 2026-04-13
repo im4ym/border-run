@@ -1,7 +1,11 @@
 package com.borderrun.app.di
 
 import com.borderrun.app.data.repository.CountryRepositoryImpl
+import com.borderrun.app.data.repository.DailyChallengeRepositoryImpl
+import com.borderrun.app.data.repository.StatsRepositoryImpl
 import com.borderrun.app.domain.repository.CountryRepository
+import com.borderrun.app.domain.repository.DailyChallengeRepository
+import com.borderrun.app.domain.repository.StatsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -22,15 +26,37 @@ abstract class RepositoryModule {
     /**
      * Binds [CountryRepositoryImpl] as the implementation of [CountryRepository].
      *
-     * The binding is [@Singleton][Singleton] to ensure the offline-first
-     * cache and network client are shared across all callers.
-     *
-     * @param impl The concrete [CountryRepositoryImpl] provided via [@Inject][javax.inject.Inject].
-     * @return The [CountryRepository] interface implemented by [impl].
+     * @param impl The concrete implementation provided via constructor injection.
+     * @return The [CountryRepository] interface.
      */
     @Binds
     @Singleton
     abstract fun bindCountryRepository(
         impl: CountryRepositoryImpl,
     ): CountryRepository
+
+    /**
+     * Binds [StatsRepositoryImpl] as the implementation of [StatsRepository].
+     *
+     * @param impl The concrete implementation provided via constructor injection.
+     * @return The [StatsRepository] interface.
+     */
+    @Binds
+    @Singleton
+    abstract fun bindStatsRepository(
+        impl: StatsRepositoryImpl,
+    ): StatsRepository
+
+    /**
+     * Binds [DailyChallengeRepositoryImpl] as the implementation of
+     * [DailyChallengeRepository].
+     *
+     * @param impl The concrete implementation provided via constructor injection.
+     * @return The [DailyChallengeRepository] interface.
+     */
+    @Binds
+    @Singleton
+    abstract fun bindDailyChallengeRepository(
+        impl: DailyChallengeRepositoryImpl,
+    ): DailyChallengeRepository
 }
