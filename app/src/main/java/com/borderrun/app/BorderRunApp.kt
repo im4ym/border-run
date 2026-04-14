@@ -4,6 +4,9 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import androidx.work.WorkManager
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import coil.decode.SvgDecoder
 import com.borderrun.app.worker.ContentSyncWorker
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -16,9 +19,13 @@ import javax.inject.Inject
  *
  * Implements [Configuration.Provider] so WorkManager is initialised with the
  * Hilt-aware [HiltWorkerFactory], enabling `@AssistedInject` in Workers.
+ *
+ * Implements [ImageLoaderFactory] to register [SvgDecoder.Factory] so that
+ * country flag SVGs (e.g. Afghanistan, Nepal) render correctly via Coil's
+ * singleton [ImageLoader].
  */
 @HiltAndroidApp
-class BorderRunApp : Application(), Configuration.Provider {
+class BorderRunApp : Application(), Configuration.Provider, ImageLoaderFactory {
 
     /** Injected [HiltWorkerFactory] for Hilt-aware WorkManager workers. */
     @Inject
@@ -33,6 +40,17 @@ class BorderRunApp : Application(), Configuration.Provider {
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
+            .build()
+
+    /**
+     * Returns a singleton [ImageLoader] with [SvgDecoder.Factory] registered.
+     *
+     * All [coil.compose.AsyncImage] calls across the app use this loader
+     * automatically, enabling SVG flag images to display correctly.
+     */
+    override fun newImageLoader(): ImageLoader =
+        ImageLoader.Builder(this)
+            .components { add(SvgDecoder.Factory()) }
             .build()
 
     /**

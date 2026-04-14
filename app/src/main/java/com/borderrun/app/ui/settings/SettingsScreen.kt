@@ -52,19 +52,19 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.borderrun.app.ui.components.BottomNavTab
 import com.borderrun.app.ui.components.BorderRunBottomNav
-import com.borderrun.app.ui.theme.CardBorder
-import com.borderrun.app.ui.theme.CardSurface
 import com.borderrun.app.ui.theme.CtaGradientEnd
 import com.borderrun.app.ui.theme.CtaGradientStart
+import com.borderrun.app.ui.theme.DarkGradientStop1
+import com.borderrun.app.ui.theme.DarkGradientStop2
+import com.borderrun.app.ui.theme.DarkGradientStop3
+import com.borderrun.app.ui.theme.DarkGradientStop4
 import com.borderrun.app.ui.theme.ErrorRed
 import com.borderrun.app.ui.theme.GradientCyan
 import com.borderrun.app.ui.theme.GradientMint
 import com.borderrun.app.ui.theme.GradientSky
 import com.borderrun.app.ui.theme.GradientTeal
+import com.borderrun.app.ui.theme.LocalIsDarkTheme
 import com.borderrun.app.ui.theme.PrimaryGreen
-import com.borderrun.app.ui.theme.TextBody
-import com.borderrun.app.ui.theme.TextHeading
-import com.borderrun.app.ui.theme.TextMuted
 
 // ── Layout constants ──────────────────────────────────────────────────────────
 
@@ -134,8 +134,10 @@ fun SettingsScreen(
         }
     }
 
+    val isDark = LocalIsDarkTheme.current
     val gradient = Brush.verticalGradient(
-        colors = listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
+        colors = if (isDark) listOf(DarkGradientStop1, DarkGradientStop2, DarkGradientStop3, DarkGradientStop4)
+                 else listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
     )
 
     Box(
@@ -271,7 +273,7 @@ private fun SettingsContent(
             Text(
                 text = "Settings",
                 style = MaterialTheme.typography.headlineSmall,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.ExtraBold,
             )
         }
@@ -359,7 +361,7 @@ private fun DifficultyRow(selected: String, onSelect: (String) -> Unit) {
         Text(
             text = "Difficulty",
             style = MaterialTheme.typography.bodyLarge,
-            color = TextHeading,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.SemiBold,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -374,7 +376,7 @@ private fun DifficultyRow(selected: String, onSelect: (String) -> Unit) {
  * Single difficulty chip button.
  *
  * Selected: CTA gradient background + white bold text.
- * Unselected: translucent [CardBorder] background + [TextBody] colour.
+ * Unselected: translucent [MaterialTheme.colorScheme.outline] background + [TextBody] colour.
  *
  * @param label Display text e.g. `"Easy"`.
  * @param isSelected Whether this chip represents the active difficulty.
@@ -385,7 +387,7 @@ private fun DifficultyChip(label: String, isSelected: Boolean, onClick: () -> Un
     val background: Brush = if (isSelected) {
         Brush.horizontalGradient(colors = listOf(CtaGradientStart, CtaGradientEnd))
     } else {
-        Brush.horizontalGradient(colors = listOf(CardBorder, CardBorder))
+        Brush.horizontalGradient(colors = listOf(MaterialTheme.colorScheme.outline, MaterialTheme.colorScheme.outline))
     }
     Box(
         modifier = Modifier
@@ -398,7 +400,7 @@ private fun DifficultyChip(label: String, isSelected: Boolean, onClick: () -> Un
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = if (isSelected) Color.White else TextBody,
+            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
         )
     }
@@ -446,13 +448,13 @@ private fun AboutRow() {
         Text(
             text = "About",
             style = MaterialTheme.typography.bodyLarge,
-            color = TextHeading,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.SemiBold,
         )
         Text(
             text = "Border Run v$APP_VERSION",
             style = MaterialTheme.typography.bodyMedium,
-            color = TextMuted,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -473,7 +475,7 @@ private fun ClearProgressDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
             Text(
                 text = "Clear Progress?",
                 style = MaterialTheme.typography.titleLarge,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,
             )
         },
@@ -481,7 +483,7 @@ private fun ClearProgressDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
             Text(
                 text = "This will permanently delete all your quiz sessions and results. This cannot be undone.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextBody,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         },
         confirmButton = {
@@ -491,10 +493,10 @@ private fun ClearProgressDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = "Cancel", color = TextBody)
+                Text(text = "Cancel", color = MaterialTheme.colorScheme.onSurface)
             }
         },
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.surface,
     )
 }
 
@@ -510,8 +512,8 @@ private fun SettingsGlassCard(content: @Composable () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(CARD_RADIUS),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
-        border = BorderStroke(0.5.dp, CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         content = { content() },
     )
@@ -527,7 +529,7 @@ private fun SectionHeader(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.titleMedium,
-        color = TextHeading,
+        color = MaterialTheme.colorScheme.onBackground,
         fontWeight = FontWeight.Bold,
     )
 }
@@ -551,7 +553,7 @@ private fun ToggleRow(label: String, checked: Boolean, onCheckedChange: (Boolean
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
-            color = TextHeading,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.SemiBold,
         )
         Switch(
@@ -561,8 +563,8 @@ private fun ToggleRow(label: String, checked: Boolean, onCheckedChange: (Boolean
                 checkedThumbColor = Color.White,
                 checkedTrackColor = PrimaryGreen,
                 uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = CardBorder,
-                uncheckedBorderColor = CardBorder,
+                uncheckedTrackColor = MaterialTheme.colorScheme.outline,
+                uncheckedBorderColor = MaterialTheme.colorScheme.outline,
             ),
         )
     }
@@ -575,7 +577,7 @@ private fun CardDivider() {
         modifier = Modifier
             .fillMaxWidth()
             .height(0.5.dp)
-            .background(CardBorder),
+            .background(MaterialTheme.colorScheme.outline),
     )
 }
 

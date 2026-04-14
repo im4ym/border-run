@@ -55,20 +55,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.borderrun.app.ui.theme.CardBorder
-import com.borderrun.app.ui.theme.CardSurface
 import com.borderrun.app.ui.theme.CtaGradientEnd
 import com.borderrun.app.ui.theme.CtaGradientStart
+import com.borderrun.app.ui.theme.DarkGradientStop1
+import com.borderrun.app.ui.theme.DarkGradientStop2
+import com.borderrun.app.ui.theme.DarkGradientStop3
+import com.borderrun.app.ui.theme.DarkGradientStop4
 import com.borderrun.app.ui.theme.ErrorRed
 import com.borderrun.app.ui.theme.GradientCyan
 import com.borderrun.app.ui.theme.GradientMint
 import com.borderrun.app.ui.theme.GradientSky
 import com.borderrun.app.ui.theme.GradientTeal
+import com.borderrun.app.ui.theme.LocalIsDarkTheme
 import com.borderrun.app.ui.theme.PrimaryGreen
 import com.borderrun.app.ui.theme.SuccessGreen
-import com.borderrun.app.ui.theme.TextBody
-import com.borderrun.app.ui.theme.TextHeading
-import com.borderrun.app.ui.theme.TextMuted
 
 // ── Layout constants ──────────────────────────────────────────────────────────
 
@@ -99,8 +99,10 @@ fun MysteryCountryScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    val isDark = LocalIsDarkTheme.current
     val gradient = Brush.verticalGradient(
-        colors = listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
+        colors = if (isDark) listOf(DarkGradientStop1, DarkGradientStop2, DarkGradientStop3, DarkGradientStop4)
+                 else listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
     )
 
     Box(
@@ -117,6 +119,7 @@ fun MysteryCountryScreen(
                 onRevealNextClue = viewModel::revealNextClue,
                 onSubmitGuess = viewModel::submitGuess,
                 onGiveUp = viewModel::giveUp,
+                onPlayAgain = viewModel::resetMystery,
             )
         }
     }
@@ -163,6 +166,7 @@ private fun MysteryActiveContent(
     onRevealNextClue: () -> Unit,
     onSubmitGuess: (String) -> Unit,
     onGiveUp: () -> Unit,
+    onPlayAgain: () -> Unit,
 ) {
     var guessText by remember { mutableStateOf("") }
 
@@ -174,20 +178,20 @@ private fun MysteryActiveContent(
                     Text(
                         text = "Mystery Country",
                         style = MaterialTheme.typography.titleMedium,
-                        color = TextHeading,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold,
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextHeading)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onBackground)
                     }
                 },
                 actions = {
                     Text(
                         text = if (state.attempts > 0) "${state.attempts} attempt${if (state.attempts == 1) "" else "s"}" else "",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextMuted,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(end = 16.dp),
                     )
                 },
@@ -225,6 +229,7 @@ private fun MysteryActiveContent(
                     countryName = state.countryName,
                     countryFlagUrl = state.countryFlagUrl,
                 )
+                GradientButton(text = "Play Again", onClick = onPlayAgain)
             } else {
                 // Reveal next clue button
                 if (state.canRevealMore) {
@@ -238,14 +243,14 @@ private fun MysteryActiveContent(
                 OutlinedTextField(
                     value = guessText,
                     onValueChange = { guessText = it },
-                    label = { Text("Type your guess…", color = TextMuted) },
+                    label = { Text("Type your guess…", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PrimaryGreen,
-                        unfocusedBorderColor = CardBorder,
-                        focusedTextColor = TextHeading,
-                        unfocusedTextColor = TextHeading,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
                     ),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
@@ -282,7 +287,7 @@ private fun MysteryActiveContent(
                             if (guessText.isNotBlank())
                                 Brush.horizontalGradient(listOf(CtaGradientStart, CtaGradientEnd))
                             else
-                                Brush.horizontalGradient(listOf(CardBorder, CardBorder)),
+                                Brush.horizontalGradient(listOf(MaterialTheme.colorScheme.outline, MaterialTheme.colorScheme.outline)),
                         )
                         .clickable(enabled = guessText.isNotBlank()) {
                             onSubmitGuess(guessText.trim())
@@ -292,7 +297,7 @@ private fun MysteryActiveContent(
                 ) {
                     Text(
                         text = "Submit Guess",
-                        color = if (guessText.isNotBlank()) Color.White else TextMuted,
+                        color = if (guessText.isNotBlank()) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                     )
@@ -305,7 +310,7 @@ private fun MysteryActiveContent(
                             .fillMaxWidth()
                             .height(48.dp)
                             .clip(RoundedCornerShape(16.dp))
-                            .background(CardSurface)
+                            .background(MaterialTheme.colorScheme.surface)
                             .clickable(onClick = onGiveUp),
                         contentAlignment = Alignment.Center,
                     ) {
@@ -331,8 +336,8 @@ private fun MysteryHeaderCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(CARD_RADIUS),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
-        border = BorderStroke(0.5.dp, CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
@@ -344,14 +349,14 @@ private fun MysteryHeaderCard() {
             Text(
                 text = "Guess Today's Country",
                 style = MaterialTheme.typography.titleLarge,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
             )
             Text(
                 text = "Clues are revealed one at a time. Use as few as possible!",
                 style = MaterialTheme.typography.bodySmall,
-                color = TextBody,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
             )
         }
@@ -365,7 +370,7 @@ private fun RevealedClueCard(index: Int, text: String) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(CARD_RADIUS),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         border = BorderStroke(0.5.dp, PrimaryGreen.copy(alpha = 0.4f)),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
@@ -391,7 +396,7 @@ private fun RevealedClueCard(index: Int, text: String) {
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.weight(1f),
             )
@@ -404,8 +409,8 @@ private fun LockedClueCard(index: Int) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(CARD_RADIUS),
-        colors = CardDefaults.cardColors(containerColor = CardSurface.copy(alpha = 0.4f)),
-        border = BorderStroke(0.5.dp, CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Row(
@@ -417,12 +422,12 @@ private fun LockedClueCard(index: Int) {
                 modifier = Modifier
                     .size(BADGE_SIZE)
                     .clip(CircleShape)
-                    .background(CardBorder),
+                    .background(MaterialTheme.colorScheme.outline),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = "${index + 1}",
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold,
                     fontSize = 13.sp,
                 )
@@ -430,7 +435,7 @@ private fun LockedClueCard(index: Int) {
             Text(
                 text = "🔒  Clue ${index + 1} — not yet revealed",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.weight(1f),
             )
         }
@@ -458,7 +463,7 @@ private fun MysteryResultCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(CARD_RADIUS),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         border = BorderStroke(
             1.dp,
             if (solved) SuccessGreen.copy(alpha = 0.5f) else ErrorRed.copy(alpha = 0.3f),
@@ -480,7 +485,7 @@ private fun MysteryResultCard(
             Text(
                 text = subtext,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextBody,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             if (countryFlagUrl.isNotEmpty()) {
                 AsyncImage(
@@ -496,7 +501,7 @@ private fun MysteryResultCard(
             Text(
                 text = countryName,
                 style = MaterialTheme.typography.headlineSmall,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
             )

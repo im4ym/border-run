@@ -44,14 +44,17 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.borderrun.app.ui.components.BottomNavTab
 import com.borderrun.app.ui.components.BorderRunBottomNav
-import com.borderrun.app.ui.theme.CardBorder
-import com.borderrun.app.ui.theme.CardSurface
 import com.borderrun.app.ui.theme.CtaGradientEnd
 import com.borderrun.app.ui.theme.CtaGradientStart
+import com.borderrun.app.ui.theme.DarkGradientStop1
+import com.borderrun.app.ui.theme.DarkGradientStop2
+import com.borderrun.app.ui.theme.DarkGradientStop3
+import com.borderrun.app.ui.theme.DarkGradientStop4
 import com.borderrun.app.ui.theme.GradientCyan
 import com.borderrun.app.ui.theme.GradientMint
 import com.borderrun.app.ui.theme.GradientSky
 import com.borderrun.app.ui.theme.GradientTeal
+import com.borderrun.app.ui.theme.LocalIsDarkTheme
 import com.borderrun.app.ui.theme.RegionAfricaGradientStart
 import com.borderrun.app.ui.theme.RegionAfricaPrimary
 import com.borderrun.app.ui.theme.RegionAmericasGradientStart
@@ -118,8 +121,10 @@ fun StatsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    val isDark = LocalIsDarkTheme.current
     val gradient = Brush.verticalGradient(
-        colors = listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
+        colors = if (isDark) listOf(DarkGradientStop1, DarkGradientStop2, DarkGradientStop3, DarkGradientStop4)
+                 else listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
     )
 
     Box(
@@ -194,14 +199,14 @@ private fun StatsEmptyContent(
             Text(
                 text = "No quizzes yet!",
                 style = MaterialTheme.typography.headlineSmall,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
             )
             Text(
                 text = "Start playing to see your stats here.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextBody,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(8.dp))
@@ -249,7 +254,7 @@ private fun StatsSuccessContent(
             Text(
                 text = "Your Statistics",
                 style = MaterialTheme.typography.headlineSmall,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.ExtraBold,
             )
         }
@@ -340,13 +345,13 @@ private fun OverviewStatColumn(
         Text(
             text = value,
             style = MaterialTheme.typography.titleLarge,
-            color = TextHeading,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.ExtraBold,
         )
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = TextMuted,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
     }
@@ -359,7 +364,7 @@ private fun StatDivider() {
         modifier = Modifier
             .width(1.dp)
             .height(60.dp)
-            .background(CardBorder),
+            .background(MaterialTheme.colorScheme.outline),
     )
 }
 
@@ -411,8 +416,8 @@ private fun MiniStatCard(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(STAT_CARD_RADIUS),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
-        border = BorderStroke(0.5.dp, CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
@@ -426,7 +431,7 @@ private fun MiniStatCard(
             Text(
                 text = value,
                 style = MaterialTheme.typography.titleMedium,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.ExtraBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -434,7 +439,7 @@ private fun MiniStatCard(
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
             )
@@ -496,7 +501,7 @@ private fun RegionBarRow(
                 Text(
                     text = config.name,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TextHeading,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.SemiBold,
                 )
             }
@@ -514,7 +519,7 @@ private fun RegionBarRow(
                 .fillMaxWidth()
                 .height(BAR_HEIGHT)
                 .clip(RoundedCornerShape(BAR_RADIUS))
-                .background(CardSurface),
+                .background(MaterialTheme.colorScheme.surface),
         ) {
             // Gradient fill
             if (clampedFraction > 0f) {
@@ -548,8 +553,8 @@ private fun RecentQuizRow(session: RecentQuizSession) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(STAT_CARD_RADIUS),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
-        border = BorderStroke(0.5.dp, CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Row(
@@ -563,7 +568,7 @@ private fun RecentQuizRow(session: RecentQuizSession) {
             Text(
                 text = session.completedAt.formatSessionDate(),
                 style = MaterialTheme.typography.bodySmall,
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.width(56.dp),
             )
 
@@ -574,7 +579,7 @@ private fun RecentQuizRow(session: RecentQuizSession) {
             Text(
                 text = "${session.correctAnswers}/${session.totalQuestions}",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,
             )
 
@@ -629,8 +634,8 @@ private fun StatsGlassCard(content: @Composable () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(CARD_RADIUS),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
-        border = BorderStroke(0.5.dp, CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         content = { content() },
     )
@@ -646,7 +651,7 @@ private fun SectionHeader(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.titleMedium,
-        color = TextHeading,
+        color = MaterialTheme.colorScheme.onBackground,
         fontWeight = FontWeight.Bold,
     )
 }

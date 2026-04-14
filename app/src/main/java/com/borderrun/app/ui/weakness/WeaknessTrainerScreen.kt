@@ -27,10 +27,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.borderrun.app.ui.quiz.QuizActiveContent
 import com.borderrun.app.ui.quiz.QuizUiState
 import com.borderrun.app.ui.theme.ErrorRed
+import com.borderrun.app.ui.theme.DarkGradientStop1
+import com.borderrun.app.ui.theme.DarkGradientStop2
+import com.borderrun.app.ui.theme.DarkGradientStop3
+import com.borderrun.app.ui.theme.DarkGradientStop4
 import com.borderrun.app.ui.theme.GradientCyan
 import com.borderrun.app.ui.theme.GradientMint
 import com.borderrun.app.ui.theme.GradientSky
 import com.borderrun.app.ui.theme.GradientTeal
+import com.borderrun.app.ui.theme.LocalIsDarkTheme
 import com.borderrun.app.ui.theme.PrimaryGreen
 
 /**
@@ -65,8 +70,10 @@ fun WeaknessTrainerScreen(
         if (completedState != null) onNavigateToResult(completedState.sessionId)
     }
 
+    val isDark = LocalIsDarkTheme.current
     val gradient = Brush.verticalGradient(
-        colors = listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
+        colors = if (isDark) listOf(DarkGradientStop1, DarkGradientStop2, DarkGradientStop3, DarkGradientStop4)
+                 else listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
     )
 
     Box(

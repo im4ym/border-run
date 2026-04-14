@@ -181,6 +181,24 @@ class MysteryCountryViewModel @Inject constructor(
         emitState(forceGiveUp = true)
     }
 
+    /**
+     * Resets today's puzzle so the user can play it again from scratch.
+     *
+     * Deletes the [DailyMysteryEntity] row for today from Room, clears all
+     * in-memory state, then re-runs [loadMystery] which will generate and
+     * insert a fresh entity (same country, deterministically seeded by date).
+     */
+    fun resetMystery() {
+        viewModelScope.launch {
+            dailyMysteryDao.deleteMysteryForDay(todayMidnightMs)
+            entity = null
+            country = null
+            allClues = emptyList()
+            _uiState.value = MysteryUiState.Loading
+            loadMystery()
+        }
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private fun save(updated: DailyMysteryEntity) {

@@ -51,18 +51,18 @@ import coil.compose.AsyncImage
 import com.borderrun.app.domain.model.Country
 import com.borderrun.app.ui.components.BottomNavTab
 import com.borderrun.app.ui.components.BorderRunBottomNav
-import com.borderrun.app.ui.theme.CardBorder
-import com.borderrun.app.ui.theme.CardSurface
 import com.borderrun.app.ui.theme.CtaGradientEnd
 import com.borderrun.app.ui.theme.CtaGradientStart
+import com.borderrun.app.ui.theme.DarkGradientStop1
+import com.borderrun.app.ui.theme.DarkGradientStop2
+import com.borderrun.app.ui.theme.DarkGradientStop3
+import com.borderrun.app.ui.theme.DarkGradientStop4
 import com.borderrun.app.ui.theme.GradientCyan
 import com.borderrun.app.ui.theme.GradientMint
 import com.borderrun.app.ui.theme.GradientSky
 import com.borderrun.app.ui.theme.GradientTeal
+import com.borderrun.app.ui.theme.LocalIsDarkTheme
 import com.borderrun.app.ui.theme.PrimaryGreen
-import com.borderrun.app.ui.theme.TextBody
-import com.borderrun.app.ui.theme.TextHeading
-import com.borderrun.app.ui.theme.TextMuted
 
 // ── Region filter data ────────────────────────────────────────────────────────
 
@@ -107,8 +107,10 @@ fun ExplorerScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    val isDark = LocalIsDarkTheme.current
     val gradient = Brush.verticalGradient(
-        colors = listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
+        colors = if (isDark) listOf(DarkGradientStop1, DarkGradientStop2, DarkGradientStop3, DarkGradientStop4)
+                 else listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
     )
 
     Box(
@@ -177,14 +179,14 @@ private fun ExplorerContent(
             Text(
                 text = "Explore Countries",
                 style = MaterialTheme.typography.headlineSmall,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.ExtraBold,
             )
             Spacer(Modifier.height(4.dp))
             Text(
                 text = "${uiState.countries.size} countries",
                 style = MaterialTheme.typography.bodySmall,
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(Modifier.height(12.dp))
         }
@@ -194,14 +196,14 @@ private fun ExplorerContent(
             OutlinedTextField(
                 value = uiState.searchQuery,
                 onValueChange = onSearchChange,
-                label = { Text("Search by name or capital…", color = TextMuted) },
+                label = { Text("Search by name or capital…", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = PrimaryGreen,
-                    unfocusedBorderColor = CardBorder,
-                    focusedTextColor = TextHeading,
-                    unfocusedTextColor = TextHeading,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
                 ),
                 singleLine = true,
             )
@@ -239,7 +241,7 @@ private fun ExplorerContent(
                         Text(
                             text = "No countries match your search.",
                             style = MaterialTheme.typography.bodyLarge,
-                            color = TextBody,
+                            color = MaterialTheme.colorScheme.onSurface,
                             textAlign = TextAlign.Center,
                         )
                     }
@@ -264,7 +266,7 @@ private fun RegionChip(label: String, isSelected: Boolean, onClick: () -> Unit) 
     val background: Brush = if (isSelected) {
         Brush.horizontalGradient(listOf(CtaGradientStart, CtaGradientEnd))
     } else {
-        Brush.horizontalGradient(listOf(CardSurface, CardSurface))
+        Brush.horizontalGradient(listOf(MaterialTheme.colorScheme.surface, MaterialTheme.colorScheme.surface))
     }
     Box(
         modifier = Modifier
@@ -277,7 +279,7 @@ private fun RegionChip(label: String, isSelected: Boolean, onClick: () -> Unit) 
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = if (isSelected) Color.White else TextBody,
+            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
         )
     }
@@ -298,8 +300,8 @@ private fun CountryCard(country: Country, isExpanded: Boolean, onToggle: () -> U
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
-        border = BorderStroke(0.5.dp, if (isExpanded) PrimaryGreen.copy(alpha = 0.5f) else CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(0.5.dp, if (isExpanded) PrimaryGreen.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         // ── Header row (always visible) ───────────────────────────────────────
@@ -323,7 +325,7 @@ private fun CountryCard(country: Country, isExpanded: Boolean, onToggle: () -> U
                 Text(
                     text = country.name,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = TextHeading,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
                 )
@@ -333,7 +335,7 @@ private fun CountryCard(country: Country, isExpanded: Boolean, onToggle: () -> U
                         append("• ${country.region}")
                     },
                     style = MaterialTheme.typography.bodySmall,
-                    color = TextBody,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                 )
             }
@@ -341,13 +343,13 @@ private fun CountryCard(country: Country, isExpanded: Boolean, onToggle: () -> U
                 Text(
                     text = country.population.formatPop(),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.SemiBold,
                 )
                 Text(
                     text = if (isExpanded) "▲" else "▼",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -395,7 +397,7 @@ private fun DetailDivider() {
         modifier = Modifier
             .fillMaxWidth()
             .height(0.5.dp)
-            .background(CardBorder),
+            .background(MaterialTheme.colorScheme.outline),
     )
 }
 
@@ -408,13 +410,13 @@ private fun DetailRow(label: String, value: String) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = TextMuted,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.width(100.dp),
         )
         Text(
             text = value,
             style = MaterialTheme.typography.bodySmall,
-            color = TextHeading,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.End,

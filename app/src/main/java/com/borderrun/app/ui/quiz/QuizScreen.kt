@@ -52,21 +52,21 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.borderrun.app.domain.model.Country
 import com.borderrun.app.domain.model.QuizQuestion
-import com.borderrun.app.ui.theme.CardBorder
-import com.borderrun.app.ui.theme.CardSurface
 import com.borderrun.app.ui.theme.CtaGradientEnd
 import com.borderrun.app.ui.theme.CtaGradientStart
+import com.borderrun.app.ui.theme.DarkGradientStop1
+import com.borderrun.app.ui.theme.DarkGradientStop2
+import com.borderrun.app.ui.theme.DarkGradientStop3
+import com.borderrun.app.ui.theme.DarkGradientStop4
 import com.borderrun.app.ui.theme.ErrorRed
 import com.borderrun.app.ui.theme.GradientCyan
 import com.borderrun.app.ui.theme.GradientMint
 import com.borderrun.app.ui.theme.GradientSky
 import com.borderrun.app.ui.theme.GradientTeal
+import com.borderrun.app.ui.theme.LocalIsDarkTheme
 import com.borderrun.app.ui.theme.PrimaryGreen
 import com.borderrun.app.ui.theme.SecondaryTeal
 import com.borderrun.app.ui.theme.SuccessGreen
-import com.borderrun.app.ui.theme.TextBody
-import com.borderrun.app.ui.theme.TextHeading
-import com.borderrun.app.ui.theme.TextMuted
 
 // ── Layout constants ──────────────────────────────────────────────────────────
 
@@ -110,8 +110,10 @@ fun QuizScreen(
         if (completedState != null) onNavigateToResult(completedState.sessionId)
     }
 
+    val isDark = LocalIsDarkTheme.current
     val gradient = Brush.verticalGradient(
-        colors = listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
+        colors = if (isDark) listOf(DarkGradientStop1, DarkGradientStop2, DarkGradientStop3, DarkGradientStop4)
+                 else listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
     )
 
     Box(
@@ -191,7 +193,7 @@ internal fun QuizActiveContent(
                     Text(
                         text = titleOverride ?: "$regionLabel Quiz",
                         style = MaterialTheme.typography.titleMedium,
-                        color = TextHeading,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold,
                     )
                 },
@@ -200,7 +202,7 @@ internal fun QuizActiveContent(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = TextHeading,
+                            tint = MaterialTheme.colorScheme.onBackground,
                         )
                     }
                 },
@@ -209,14 +211,14 @@ internal fun QuizActiveContent(
                     Text(
                         text = state.elapsedSeconds.formatTimer(),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TextBody,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(end = 8.dp),
                     )
                     // Question counter
                     Text(
                         text = "${state.currentIndex + 1} / ${state.questions.size}",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TextHeading,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(end = 16.dp),
                     )
@@ -299,7 +301,7 @@ private fun QuizProgressBar(progress: Float, modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .height(8.dp)
             .clip(RoundedCornerShape(4.dp))
-            .background(CardSurface),
+            .background(MaterialTheme.colorScheme.surface),
     ) {
         Box(
             modifier = Modifier
@@ -325,8 +327,8 @@ private fun QuizQuestionCard(question: QuizQuestion) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(CARD_RADIUS),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
-        border = BorderStroke(0.5.dp, CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
@@ -349,7 +351,7 @@ private fun QuizQuestionCard(question: QuizQuestion) {
             Text(
                 text = question.questionText,
                 style = MaterialTheme.typography.titleLarge,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
             )
@@ -464,7 +466,9 @@ private fun CountryCompareCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val (bgColor, borderColor) = revealColors(isSelected, isCorrect, isRevealed)
+    val surface = MaterialTheme.colorScheme.surface
+    val outline = MaterialTheme.colorScheme.outline
+    val (bgColor, borderColor) = revealColors(isSelected, isCorrect, isRevealed, surface, outline)
     Card(
         modifier = modifier.clickable(enabled = !isRevealed, onClick = onClick),
         shape = RoundedCornerShape(OPTION_RADIUS),
@@ -491,7 +495,7 @@ private fun CountryCompareCard(
             Text(
                 text = country.name,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
             )
@@ -500,7 +504,7 @@ private fun CountryCompareCard(
                 Text(
                     text = country.population.formatPopulation(),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TextBody,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
         }
@@ -534,7 +538,9 @@ private fun AnswerOptionCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val (bgColor, borderColor) = revealColors(isSelected, isCorrect, isRevealed)
+    val surface = MaterialTheme.colorScheme.surface
+    val outline = MaterialTheme.colorScheme.outline
+    val (bgColor, borderColor) = revealColors(isSelected, isCorrect, isRevealed, surface, outline)
     val badgeBg = when {
         isRevealed && isCorrect -> SuccessGreen
         isRevealed && isSelected && !isCorrect -> ErrorRed
@@ -573,7 +579,7 @@ private fun AnswerOptionCard(
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyLarge,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.weight(1f),
             )
@@ -599,8 +605,8 @@ private fun AnswerFeedbackCard(isCorrect: Boolean, explanationText: String) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(CARD_RADIUS),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
-        border = BorderStroke(0.5.dp, CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
@@ -622,7 +628,7 @@ private fun AnswerFeedbackCard(isCorrect: Boolean, explanationText: String) {
             Text(
                 text = explanationText,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextBody,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }
@@ -664,22 +670,27 @@ private fun GradientButton(
 /**
  * Returns the card background and border colours based on reveal state.
  *
- * | Condition                     | Background      | Border     |
- * |-------------------------------|-----------------|------------|
- * | Not yet revealed              | CardSurface     | CardBorder |
- * | Revealed — correct answer     | SuccessGreen 20%| SuccessGreen |
- * | Revealed — user wrong pick    | ErrorRed 20%    | ErrorRed   |
- * | Revealed — other option       | dimmed surface  | CardBorder |
+ * | Condition                     | Background          | Border       |
+ * |-------------------------------|---------------------|--------------|
+ * | Not yet revealed              | [surface]           | [outline]    |
+ * | Revealed — correct answer     | SuccessGreen 20%    | SuccessGreen |
+ * | Revealed — user wrong pick    | ErrorRed 20%        | ErrorRed     |
+ * | Revealed — other option       | dimmed [surface]    | [outline]    |
+ *
+ * @param surface Card background colour from the current colour scheme.
+ * @param outline Card border colour from the current colour scheme.
  */
 private fun revealColors(
     isSelected: Boolean,
     isCorrect: Boolean,
     isRevealed: Boolean,
+    surface: Color,
+    outline: Color,
 ): Pair<Color, Color> = when {
-    !isRevealed -> CardSurface to CardBorder
+    !isRevealed -> surface to outline
     isCorrect -> Color(0xFF059669).copy(alpha = 0.18f) to SuccessGreen
     isSelected -> Color(0xFFE11D48).copy(alpha = 0.18f) to ErrorRed
-    else -> CardSurface.copy(alpha = 0.5f) to CardBorder
+    else -> surface.copy(alpha = 0.5f) to outline
 }
 
 /**

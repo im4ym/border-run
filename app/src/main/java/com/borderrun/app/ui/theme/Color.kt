@@ -2,6 +2,19 @@ package com.borderrun.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+// ── Dark mode gradient stops ────────────────────────────────────────────────
+/** Dark mode background gradient — first stop (deep forest teal). */
+val DarkGradientStop1 = Color(0xFF0A1F1A)
+
+/** Dark mode background gradient — second stop. */
+val DarkGradientStop2 = Color(0xFF0D2818)
+
+/** Dark mode background gradient — third stop. */
+val DarkGradientStop3 = Color(0xFF0F2027)
+
+/** Dark mode background gradient — fourth stop (near black). */
+val DarkGradientStop4 = Color(0xFF121212)
+
 // ── Background gradient stops ───────────────────────────────────────────────
 /** Mint — first stop of the app background gradient. */
 val GradientMint = Color(0xFFDDFCE6)

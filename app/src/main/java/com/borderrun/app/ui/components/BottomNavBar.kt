@@ -13,10 +13,8 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.borderrun.app.ui.theme.CardSurface
+import androidx.compose.material3.MaterialTheme
 import com.borderrun.app.ui.theme.PrimaryGreen
-import com.borderrun.app.ui.theme.TextBody
-import com.borderrun.app.ui.theme.TextHeading
 
 /**
  * Enumerates the four tabs in the Border Run bottom navigation bar.
@@ -63,7 +61,7 @@ fun BorderRunBottomNav(
     currentTab: BottomNavTab,
     onTabSelected: (BottomNavTab) -> Unit,
 ) {
-    NavigationBar(containerColor = CardSurface) {
+    NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
         BottomNavTab.entries.forEach { tab ->
             val selected = tab == currentTab
             NavigationBarItem(
@@ -79,9 +77,9 @@ fun BorderRunBottomNav(
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = PrimaryGreen,
                     selectedTextColor = PrimaryGreen,
-                    indicatorColor = CardSurface,
-                    unselectedIconColor = TextBody,
-                    unselectedTextColor = TextBody,
+                    indicatorColor = MaterialTheme.colorScheme.surface,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface,
                 ),
             )
         }

@@ -44,17 +44,20 @@ import com.borderrun.app.domain.model.DAILY_CHALLENGE_QUESTION_COUNT
 import com.borderrun.app.domain.model.DAILY_CHALLENGE_TIME_ESTIMATE_MINUTES
 import com.borderrun.app.domain.model.DailyContent
 import com.borderrun.app.domain.model.WeaknessData
-import com.borderrun.app.ui.components.BottomNavTab
 import com.borderrun.app.ui.components.BorderRunBottomNav
-import com.borderrun.app.ui.theme.CardBorder
-import com.borderrun.app.ui.theme.CardSurface
+import com.borderrun.app.ui.components.BottomNavTab
 import com.borderrun.app.ui.theme.CtaGradientEnd
 import com.borderrun.app.ui.theme.CtaGradientStart
+import com.borderrun.app.ui.theme.DarkGradientStop1
+import com.borderrun.app.ui.theme.DarkGradientStop2
+import com.borderrun.app.ui.theme.DarkGradientStop3
+import com.borderrun.app.ui.theme.DarkGradientStop4
 import com.borderrun.app.ui.theme.ErrorRed
 import com.borderrun.app.ui.theme.GradientCyan
 import com.borderrun.app.ui.theme.GradientMint
 import com.borderrun.app.ui.theme.GradientSky
 import com.borderrun.app.ui.theme.GradientTeal
+import com.borderrun.app.ui.theme.LocalIsDarkTheme
 import com.borderrun.app.ui.theme.PrimaryGreen
 import com.borderrun.app.ui.theme.RegionAfricaGradientStart
 import com.borderrun.app.ui.theme.RegionAfricaPrimary
@@ -65,9 +68,7 @@ import com.borderrun.app.ui.theme.RegionAsiaPrimary
 import com.borderrun.app.ui.theme.RegionEuropeGradientStart
 import com.borderrun.app.ui.theme.RegionEuropePrimary
 import com.borderrun.app.ui.theme.SuccessGreen
-import com.borderrun.app.ui.theme.TextBody
 import com.borderrun.app.ui.theme.TextHeading
-import com.borderrun.app.ui.theme.TextMuted
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -141,8 +142,10 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    val isDark = LocalIsDarkTheme.current
     val gradientBackground = Brush.verticalGradient(
-        colors = listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
+        colors = if (isDark) listOf(DarkGradientStop1, DarkGradientStop2, DarkGradientStop3, DarkGradientStop4)
+                 else listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
     )
 
     Box(
@@ -298,12 +301,12 @@ private fun GreetingSection(greeting: String, streak: Int) {
             Text(
                 text = greeting,
                 style = MaterialTheme.typography.displaySmall,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
             )
             Text(
                 text = "Ready to explore?",
                 style = MaterialTheme.typography.bodyLarge,
-                color = TextBody,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
         if (streak > 0) {
@@ -381,12 +384,12 @@ private fun DailyChallengeCard(
                     Text(
                         text = "Daily Challenge",
                         style = MaterialTheme.typography.titleLarge,
-                        color = TextHeading,
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
                     Text(
                         text = challenge?.title ?: "Preparing today's challenge…",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TextBody,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
                 if (challenge?.completed == true) {
@@ -400,7 +403,7 @@ private fun DailyChallengeCard(
                 Text(
                     text = "$DAILY_CHALLENGE_QUESTION_COUNT questions  •  ~$DAILY_CHALLENGE_TIME_ESTIMATE_MINUTES min",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
@@ -449,7 +452,7 @@ private fun MysteryCard(dailyContent: DailyContent, onPlayClick: () -> Unit) {
                 Text(
                     text = "Mystery Country",
                     style = MaterialTheme.typography.titleLarge,
-                    color = TextHeading,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
                 Text(
                     text = when {
@@ -459,7 +462,7 @@ private fun MysteryCard(dailyContent: DailyContent, onPlayClick: () -> Unit) {
                         else -> "Can you guess today's country?"
                     },
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TextBody,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
             val isSolved = mystery?.solved == true
@@ -532,7 +535,7 @@ private fun WeaknessTrainerCard(weaknessData: WeaknessData, onPracticeClick: () 
                         Text(
                             text = "Weakness Trainer",
                             style = MaterialTheme.typography.titleLarge,
-                            color = TextHeading,
+                            color = MaterialTheme.colorScheme.onBackground,
                         )
                         Box(
                             modifier = Modifier
@@ -551,7 +554,7 @@ private fun WeaknessTrainerCard(weaknessData: WeaknessData, onPracticeClick: () 
                     Text(
                         text = "You score lower in ${weaknessData.regionName}",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TextBody,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -568,7 +571,7 @@ private fun WeaknessTrainerCard(weaknessData: WeaknessData, onPracticeClick: () 
                 Text(
                     text = "Current accuracy in ${weaknessData.regionName}: $accuracyPct%",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             GradientButton(
@@ -647,8 +650,8 @@ private fun RegionCard(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
-        border = BorderStroke(0.5.dp, CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
         onClick = onClick,
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
@@ -673,13 +676,13 @@ private fun RegionCard(
                 Text(
                     text = info.name,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TextHeading,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
                     text = "$count countries",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -756,13 +759,13 @@ private fun DayFaceItem(
     isToday: Boolean,
 ) {
     val bgColor = when {
-        isFuture -> TextMuted.copy(alpha = 0.12f)
+        isFuture -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12f)
         hasActivity -> SuccessGreen.copy(alpha = 0.18f)
         isToday -> PrimaryGreen.copy(alpha = 0.12f)
         else -> ErrorRed.copy(alpha = 0.12f)
     }
     val labelColor = when {
-        isFuture -> TextMuted
+        isFuture -> MaterialTheme.colorScheme.onSurfaceVariant
         hasActivity -> SuccessGreen
         isToday -> PrimaryGreen
         else -> ErrorRed
@@ -841,12 +844,12 @@ private fun StatItem(value: String, label: String) {
         Text(
             text = value,
             style = MaterialTheme.typography.displaySmall,
-            color = TextHeading,
+            color = MaterialTheme.colorScheme.onBackground,
         )
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = TextMuted,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -858,7 +861,7 @@ private fun StatDivider() {
         modifier = Modifier
             .width(1.dp)
             .height(40.dp)
-            .background(TextMuted.copy(alpha = 0.3f)),
+            .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)),
     )
 }
 
@@ -868,7 +871,7 @@ private fun StatDivider() {
  * Glass-morphism card container matching the Border Run design system.
  *
  * Uses a 22 dp corner radius, [CardSurface] background (55 % opacity white),
- * and a 0.5 dp [CardBorder] stroke. Zero elevation keeps the card from casting
+ * and a 0.5 dp [MaterialTheme.colorScheme.outline] stroke. Zero elevation keeps the card from casting
  * shadows that would conflict with the gradient background.
  *
  * @param modifier Optional [Modifier] for the card root.
@@ -882,8 +885,8 @@ private fun GlassCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(22.dp),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
-        border = BorderStroke(0.5.dp, CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         content()
@@ -912,7 +915,7 @@ private fun GradientButton(
     val gradientBrush = if (enabled) {
         Brush.horizontalGradient(listOf(CtaGradientStart, CtaGradientEnd))
     } else {
-        Brush.horizontalGradient(listOf(TextMuted, TextMuted))
+        Brush.horizontalGradient(listOf(MaterialTheme.colorScheme.onSurfaceVariant, MaterialTheme.colorScheme.onSurfaceVariant))
     }
 
     Box(
@@ -997,7 +1000,7 @@ private fun SectionHeader(title: String, modifier: Modifier = Modifier) {
     Text(
         text = title,
         style = MaterialTheme.typography.titleLarge,
-        color = TextHeading,
+        color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier,
     )
 }

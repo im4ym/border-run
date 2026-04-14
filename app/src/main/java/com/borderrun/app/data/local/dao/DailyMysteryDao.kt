@@ -53,6 +53,18 @@ interface DailyMysteryDao {
     suspend fun getMysteryById(id: Int): DailyMysteryEntity?
 
     /**
+     * Deletes the mystery row for the given day.
+     *
+     * Called by [MysteryCountryViewModel.resetMystery] to allow replaying the
+     * same day's puzzle. The next [getMysteryForDay] call will return `null`,
+     * causing a fresh puzzle to be generated and inserted.
+     *
+     * @param dayTimestamp Midnight timestamp for the day to delete.
+     */
+    @Query("DELETE FROM daily_mystery WHERE date = :dayTimestamp")
+    suspend fun deleteMysteryForDay(dayTimestamp: Long)
+
+    /**
      * Deletes all rows from the `daily_mystery` table.
      *
      * Called from "Clear All My Data" in Settings.

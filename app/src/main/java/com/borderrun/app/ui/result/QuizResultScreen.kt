@@ -51,20 +51,20 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.borderrun.app.domain.model.QuizAnswerSummary
 import com.borderrun.app.domain.model.QuizResult
-import com.borderrun.app.ui.theme.CardBorder
-import com.borderrun.app.ui.theme.CardSurface
 import com.borderrun.app.ui.theme.CtaGradientEnd
 import com.borderrun.app.ui.theme.CtaGradientStart
+import com.borderrun.app.ui.theme.DarkGradientStop1
+import com.borderrun.app.ui.theme.DarkGradientStop2
+import com.borderrun.app.ui.theme.DarkGradientStop3
+import com.borderrun.app.ui.theme.DarkGradientStop4
 import com.borderrun.app.ui.theme.ErrorRed
 import com.borderrun.app.ui.theme.GradientCyan
 import com.borderrun.app.ui.theme.GradientMint
 import com.borderrun.app.ui.theme.GradientSky
 import com.borderrun.app.ui.theme.GradientTeal
+import com.borderrun.app.ui.theme.LocalIsDarkTheme
 import com.borderrun.app.ui.theme.PrimaryGreen
 import com.borderrun.app.ui.theme.SuccessGreen
-import com.borderrun.app.ui.theme.TextBody
-import com.borderrun.app.ui.theme.TextHeading
-import com.borderrun.app.ui.theme.TextMuted
 
 // ── Layout constants ──────────────────────────────────────────────────────────
 
@@ -95,8 +95,10 @@ fun QuizResultScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    val isDark = LocalIsDarkTheme.current
     val gradient = Brush.verticalGradient(
-        colors = listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
+        colors = if (isDark) listOf(DarkGradientStop1, DarkGradientStop2, DarkGradientStop3, DarkGradientStop4)
+                 else listOf(GradientMint, GradientTeal, GradientCyan, GradientSky),
     )
 
     Box(
@@ -221,7 +223,7 @@ private fun HeroCard(result: QuizResult) {
             Text(
                 text = message,
                 style = MaterialTheme.typography.headlineSmall,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
             )
@@ -255,7 +257,7 @@ private fun HeroCard(result: QuizResult) {
 @Composable
 private fun ScoreRing(correct: Int, total: Int, modifier: Modifier = Modifier) {
     val fraction = if (total == 0) 0f else correct.toFloat() / total
-    val trackColor = CardSurface
+    val trackColor = MaterialTheme.colorScheme.surface
     val arcColor = SuccessGreen
     val ringStrokePx: Dp = RING_STROKE
 
@@ -297,12 +299,12 @@ private fun ScoreRing(correct: Int, total: Int, modifier: Modifier = Modifier) {
                 text = "$correct",
                 fontSize = 52.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
             )
             Text(
                 text = "/ $total",
                 fontSize = 18.sp,
-                color = TextBody,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.SemiBold,
             )
         }
@@ -343,8 +345,8 @@ private fun StatMiniCard(label: String, value: String, modifier: Modifier = Modi
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(STAT_CARD_RADIUS),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
-        border = BorderStroke(0.5.dp, CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
@@ -357,13 +359,13 @@ private fun StatMiniCard(label: String, value: String, modifier: Modifier = Modi
             Text(
                 text = value,
                 style = MaterialTheme.typography.titleLarge,
-                color = TextHeading,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.ExtraBold,
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -384,8 +386,8 @@ private fun AnswerBreakdownRow(answer: QuizAnswerSummary) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(STAT_CARD_RADIUS),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
-        border = BorderStroke(0.5.dp, CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Row(
@@ -416,12 +418,12 @@ private fun AnswerBreakdownRow(answer: QuizAnswerSummary) {
                 Text(
                     text = answer.questionType.toQuestionLabel(),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
                     text = answer.userAnswer,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = if (answer.isCorrect) TextHeading else ErrorRed,
+                    color = if (answer.isCorrect) MaterialTheme.colorScheme.onBackground else ErrorRed,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -506,8 +508,8 @@ private fun GlassCard(content: @Composable () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(CARD_RADIUS),
-        colors = CardDefaults.cardColors(containerColor = CardSurface),
-        border = BorderStroke(0.5.dp, CardBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         content = { content() },
     )
@@ -523,7 +525,7 @@ private fun SectionHeader(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.titleMedium,
-        color = TextHeading,
+        color = MaterialTheme.colorScheme.onBackground,
         fontWeight = FontWeight.Bold,
     )
 }

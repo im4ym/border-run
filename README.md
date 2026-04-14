@@ -6,15 +6,13 @@ A geography quiz app for Android that teaches world geography through interactiv
 
 ## Screenshots
 
-> _Screenshots will be added once the app is running on a physical device._
+| Home | Quiz | Quiz Result |
+|------|------|-------------|
+| ![Home](screenshots/home.png) | ![Quiz](screenshots/quiz.png) | ![Result](screenshots/result.png) |
 
-| Home | Quiz | Result |
-|------|------|--------|
-| _(placeholder)_ | _(placeholder)_ | _(placeholder)_ |
-
-| Stats | Explorer | Mystery Country |
-|-------|----------|-----------------|
-| _(placeholder)_ | _(placeholder)_ | _(placeholder)_ |
+| Stats | Settings | Explorer |
+|-------|----------|----------|
+| ![Stats](screenshots/stats.png) | ![Settings](screenshots/settings.png) | ![Explorer](screenshots/explore.png) |
 
 ---
 
