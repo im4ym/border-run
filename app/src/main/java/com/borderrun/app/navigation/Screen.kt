@@ -15,6 +15,12 @@ private const val ROUTE_PERMISSION_RATIONALE = "permission-rationale"
 /** Route string for the Explorer screen. */
 private const val ROUTE_EXPLORER = "explorer"
 
+/** Route string for the Daily Mystery screen. */
+private const val ROUTE_MYSTERY = "mystery"
+
+/** Route template for the Weakness Trainer screen (requires region argument). */
+private const val ROUTE_WEAKNESS_TRAINER_TEMPLATE = "weakness/{region}"
+
 /** Route template for the Quiz screen (requires region and difficulty arguments). */
 private const val ROUTE_QUIZ_TEMPLATE = "quiz/{region}/{difficulty}"
 
@@ -94,4 +100,25 @@ sealed class Screen(val route: String) {
 
     /** Explorer screen — browse and search all countries. */
     data object Explorer : Screen(ROUTE_EXPLORER)
+
+    /** Daily Mystery Country screen — guess today's mystery country from clues. */
+    data object Mystery : Screen(ROUTE_MYSTERY)
+
+    /**
+     * Smart Weakness Trainer screen — focused quiz on the user's weakest region.
+     *
+     * @property route The NavHost route template (contains `{region}`).
+     */
+    data object WeaknessTrainer : Screen(ROUTE_WEAKNESS_TRAINER_TEMPLATE) {
+        /** Argument key for the region name in the route. */
+        const val ARG_REGION = "region"
+
+        /**
+         * Creates the concrete navigation route for a weakness training session.
+         *
+         * @param region The weak region to drill, e.g. `"Asia"`.
+         * @return Route string with argument substituted.
+         */
+        fun createRoute(region: String): String = "weakness/$region"
+    }
 }

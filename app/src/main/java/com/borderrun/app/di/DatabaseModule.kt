@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.borderrun.app.data.local.BorderRunDatabase
 import com.borderrun.app.data.local.DATABASE_NAME
+import com.borderrun.app.data.local.MIGRATION_1_2
 import com.borderrun.app.data.local.dao.CountryDao
 import com.borderrun.app.data.local.dao.DailyChallengeDao
 import com.borderrun.app.data.local.dao.DailyMysteryDao
@@ -43,7 +44,9 @@ object DatabaseModule {
             context,
             BorderRunDatabase::class.java,
             DATABASE_NAME,
-        ).build()
+        )
+            .addMigrations(MIGRATION_1_2)
+            .build()
 
     /**
      * Provides the [CountryDao] from the database.

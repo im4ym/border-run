@@ -3,6 +3,8 @@ package com.borderrun.app
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import androidx.work.WorkManager
+import com.borderrun.app.worker.ContentSyncWorker
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -32,4 +34,16 @@ class BorderRunApp : Application(), Configuration.Provider {
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .build()
+
+    /**
+     * Schedules the background country-data sync worker on every cold start.
+     *
+     * [ContentSyncWorker.enqueue] uses [ExistingPeriodicWorkPolicy.KEEP], so
+     * calling this on each launch is safe — WorkManager will not reset the
+     * timer if the worker is already queued.
+     */
+    override fun onCreate() {
+        super.onCreate()
+        ContentSyncWorker.enqueue(WorkManager.getInstance(this))
+    }
 }

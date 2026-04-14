@@ -80,4 +80,17 @@ class StatsRepositoryImpl @Inject constructor(
      */
     override fun getTotalAnswerCount(): Flow<Int?> =
         quizSessionDao.getTotalQuestionsAnswered()
+
+    /**
+     * Delegates to [QuizAnswerDao.getAccuracyByRegion] and converts the
+     * list of [com.borderrun.app.data.local.model.RegionAccuracy] rows into a
+     * `region → accuracy fraction` map, keeping the domain layer free of
+     * data-layer types.
+     *
+     * @param since Unix timestamp (ms) — typically `now - 30 days`.
+     */
+    override fun getAccuracyByRegion(since: Long): Flow<Map<String, Float>> =
+        quizAnswerDao.getAccuracyByRegion(since).map { accuracies ->
+            accuracies.associate { it.region to it.accuracyFraction }
+        }
 }

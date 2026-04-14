@@ -28,4 +28,6 @@ data class UserPreferencesEntity(
     val locationEnabled: Boolean = false,
     val notificationsEnabled: Boolean = false,
     val notificationTime: String = "18:00",
+    /** Whether the app should display in dark mode. Saved but not yet applied to the theme. */
+    val darkModeEnabled: Boolean = false,
 )

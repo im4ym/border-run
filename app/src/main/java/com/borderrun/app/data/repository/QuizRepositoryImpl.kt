@@ -4,6 +4,8 @@ import com.borderrun.app.data.local.dao.QuizAnswerDao
 import com.borderrun.app.data.local.dao.QuizSessionDao
 import com.borderrun.app.data.local.entity.QuizAnswerEntity
 import com.borderrun.app.data.local.entity.QuizSessionEntity
+import com.borderrun.app.domain.model.QuizAnswerSummary
+import com.borderrun.app.domain.model.QuizResult
 import com.borderrun.app.domain.repository.QuizRepository
 import javax.inject.Inject
 
@@ -75,6 +77,35 @@ class QuizRepositoryImpl @Inject constructor(
                     answeredAt = System.currentTimeMillis(),
                 ),
             ),
+        )
+    }
+
+    /**
+     * Loads session and answer rows from Room and assembles a [QuizResult].
+     *
+     * Returns `null` when [sessionId] does not match any row in `quiz_sessions`.
+     */
+    override suspend fun getResult(sessionId: Int): QuizResult? {
+        val session = quizSessionDao.getSessionById(sessionId) ?: return null
+        val answers = quizAnswerDao.getAnswersForSession(sessionId)
+        return QuizResult(
+            sessionId = session.id,
+            region = session.region,
+            difficulty = session.difficulty,
+            totalQuestions = session.totalQuestions,
+            correctAnswers = session.correctAnswers,
+            score = session.score,
+            durationMs = session.durationMs,
+            answers = answers.mapIndexed { index, entity ->
+                QuizAnswerSummary(
+                    questionNumber = index + 1,
+                    questionType = entity.questionType,
+                    userAnswer = entity.userAnswer,
+                    correctAnswer = entity.correctAnswer,
+                    isCorrect = entity.isCorrect,
+                    timeSpentMs = entity.timeSpentMs,
+                )
+            },
         )
     }
 

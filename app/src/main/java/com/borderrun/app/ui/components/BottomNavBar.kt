@@ -3,6 +3,7 @@ package com.borderrun.app.ui.components
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -38,6 +39,9 @@ enum class BottomNavTab(val label: String, val icon: ImageVector) {
 
     /** Settings screen tab. */
     Settings(label = "Settings", icon = Icons.Default.Settings),
+
+    /** Explorer screen tab — browse and search all countries. */
+    Explorer(label = "Explore", icon = Icons.Default.Search),
 }
 
 /**

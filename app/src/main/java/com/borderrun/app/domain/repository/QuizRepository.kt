@@ -1,5 +1,7 @@
 package com.borderrun.app.domain.repository
 
+import com.borderrun.app.domain.model.QuizResult
+
 /**
  * Repository interface for quiz session and answer persistence, defined in the
  * domain layer.
@@ -65,4 +67,15 @@ interface QuizRepository {
         score: Int,
         durationMs: Long,
     )
+
+    /**
+     * Loads the session and all its answer rows and assembles a [QuizResult].
+     *
+     * Returns `null` when no session with [sessionId] exists in Room (e.g. bad
+     * navigation argument).
+     *
+     * @param sessionId Session primary key.
+     * @return The aggregate [QuizResult], or `null` if not found.
+     */
+    suspend fun getResult(sessionId: Int): QuizResult?
 }

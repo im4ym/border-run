@@ -82,4 +82,15 @@ interface StatsRepository {
      * @return Flow emitting the total answer count, or `null`.
      */
     fun getTotalAnswerCount(): Flow<Int?>
+
+    /**
+     * Returns a map of region name → accuracy fraction for the given time window.
+     *
+     * Only regions that have at least one answer recorded within the window
+     * appear in the map. Missing regions have no entry (not zero).
+     *
+     * @param since Unix timestamp (ms) — typically `now - 30 days`.
+     * @return Flow emitting a `region → accuracy (0.0..1.0)` map.
+     */
+    fun getAccuracyByRegion(since: Long): Flow<Map<String, Float>>
 }

@@ -136,14 +136,14 @@ fun QuizScreen(
 // ── Loading / Error ───────────────────────────────────────────────────────────
 
 @Composable
-private fun QuizLoadingContent() {
+internal fun QuizLoadingContent() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator(color = PrimaryGreen)
     }
 }
 
 @Composable
-private fun QuizErrorContent(message: String, onBack: () -> Unit) {
+internal fun QuizErrorContent(message: String, onBack: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -173,11 +173,12 @@ private fun QuizErrorContent(message: String, onBack: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun QuizActiveContent(
+internal fun QuizActiveContent(
     state: QuizUiState.Active,
     onNavigateBack: () -> Unit,
     onAnswerSelected: (String) -> Unit,
     onNextQuestion: () -> Unit,
+    titleOverride: String? = null,
 ) {
     val question = state.currentQuestion ?: return
     val regionLabel = question.region.takeIf { it.isNotBlank() } ?: "Quiz"
@@ -188,7 +189,7 @@ private fun QuizActiveContent(
             TopAppBar(
                 title = {
                     Text(
-                        text = "$regionLabel Quiz",
+                        text = titleOverride ?: "$regionLabel Quiz",
                         style = MaterialTheme.typography.titleMedium,
                         color = TextHeading,
                         fontWeight = FontWeight.Bold,

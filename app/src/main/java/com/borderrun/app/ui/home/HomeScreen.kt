@@ -136,6 +136,7 @@ fun HomeScreen(
     onQuizClick: () -> Unit,
     onStatsClick: () -> Unit,
     onSettingsClick: () -> Unit,
+    onExplorerClick: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -160,6 +161,7 @@ fun HomeScreen(
                             BottomNavTab.Quiz -> onQuizClick()
                             BottomNavTab.Stats -> onStatsClick()
                             BottomNavTab.Settings -> onSettingsClick()
+                            BottomNavTab.Explorer -> onExplorerClick()
                         }
                     },
                 )
@@ -404,11 +406,11 @@ private fun DailyChallengeCard(
 
             GradientButton(
                 text = when {
-                    challenge == null -> "Coming Soon"
+                    challenge == null -> "Start Daily Quiz"
                     challenge.completed -> "View Results"
                     else -> "Start Challenge"
                 },
-                enabled = challenge != null,
+                enabled = true,
                 onClick = onStartClick,
             )
         }
@@ -471,7 +473,7 @@ private fun MysteryCard(dailyContent: DailyContent, onPlayClick: () -> Unit) {
                         ),
                     )
                     .then(
-                        if (mystery != null && !isSolved) Modifier.clickable { onPlayClick() }
+                        if (!isSolved) Modifier.clickable { onPlayClick() }
                         else Modifier,
                     )
                     .padding(horizontal = 16.dp, vertical = 8.dp),

@@ -2,6 +2,8 @@ package com.borderrun.app.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.borderrun.app.data.local.dao.CountryDao
 import com.borderrun.app.data.local.dao.DailyChallengeDao
 import com.borderrun.app.data.local.dao.DailyMysteryDao
@@ -16,7 +18,21 @@ import com.borderrun.app.data.local.entity.QuizSessionEntity
 import com.borderrun.app.data.local.entity.UserPreferencesEntity
 
 /** Current schema version. Increment whenever entities change. */
-private const val DATABASE_VERSION = 1
+private const val DATABASE_VERSION = 2
+
+/**
+ * Migration from version 1 to 2.
+ *
+ * Adds the [UserPreferencesEntity.darkModeEnabled] column (INTEGER, NOT NULL,
+ * default 0 = false) to the `user_preferences` table.
+ */
+val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL(
+            "ALTER TABLE user_preferences ADD COLUMN darkModeEnabled INTEGER NOT NULL DEFAULT 0",
+        )
+    }
+}
 
 /** Filename used when opening the Room database on-device. */
 const val DATABASE_NAME = "borderrun.db"

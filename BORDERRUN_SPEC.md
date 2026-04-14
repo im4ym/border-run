@@ -488,7 +488,7 @@ debugImplementation("androidx.compose.ui:ui-test-manifest")
 
 ## Code Quality Guidelines
 
-The rubric awards 10% for code quality. Ensure Claude Code follows these:
+The rubric awards 10% for code quality. Ensure the following guidelines are followed:
 
 - **Naming conventions:** camelCase for functions/variables, PascalCase for classes, SCREAMING_SNAKE for constants
 - **KDoc comments** on all public classes and functions:
@@ -505,7 +505,7 @@ The rubric awards 10% for code quality. Ensure Claude Code follows these:
 - **Consistent formatting:** Standard Kotlin code style (ktlint compatible)
 - **Meaningful variable names:** `countriesByRegion` not `list1`, `accuracyPercentage` not `acc`
 
-When prompting Claude Code, add: "Include KDoc comments on all public classes and functions. Use meaningful variable names and named constants instead of magic numbers."
+All public classes and functions should include KDoc comments. Use meaningful variable names and named constants instead of magic numbers.
 
 ---
 
@@ -629,9 +629,6 @@ This app implements privacy-by-design principles informed by the ACS Code of Eth
 - Transparent data dashboard in Settings
 - No third-party tracking or advertising SDKs
 
-## AI Declaration
-This project was developed with assistance from Claude (Anthropic).
-See the AI Declaration form submitted with the assignment.
 ```
 
 ---
@@ -651,7 +648,7 @@ Write this AFTER the app is built. Submit as PDF.
 - Tension between wanting rich features vs. data minimisation
 - How it felt to implement permission rationale (was it natural or forced?)
 - Confidence/uncertainty around architectural decisions
-- Experience using AI-assisted development (Claude)
+- Experience applying ethical principles to practical development decisions
 
 ### Evaluation (~200 words)
 - What went well: offline-first architecture, permission flow, privacy dashboard
@@ -670,7 +667,7 @@ Write this AFTER the app is built. Submit as PDF.
 - Ethics is not separate from technical practice — it IS technical practice
 - Android's permission model provides scaffolding but responsibility lies with the developer
 - Privacy-by-design defaults matter more than privacy-by-option
-- AI-assisted development still requires ethical judgement from the developer
+- Responsibility for ethical outcomes lies with the developer, not the tools used
 
 ### Action Plan (~150 words)
 - Future apps: conduct Privacy Impact Assessment before architecture design
@@ -721,5 +718,5 @@ Before submitting, verify ALL of the following:
 - [ ] `.zip` file exported from Android Studio (File → Export → Export to zip file)
 - [ ] `.pdf` self-reflection (1000 words, Gibbs' Reflective Cycle)
 - [ ] GitHub repository link provided in submission
-- [ ] JCU Declaration of AI-Generated Material form completed and submitted
+- [ ] All required declaration forms completed and submitted
 - [ ] All files uploaded to LearnJCU Assignment 3 dropbox
